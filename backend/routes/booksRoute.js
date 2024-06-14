@@ -34,7 +34,7 @@ router.post("/", async (request, response) => {
 router.get("/", async (_, response) => {
   try {
     const books = await Book.find({});
-    response.status(400).json({
+    response.status(200).json({
       count: books.length,
       data: books,
     });
@@ -49,7 +49,7 @@ router.get("/:id", async (request, response) => {
   try {
     const { id } = request.params;
     const book = await Book.findById(id);
-    response.status(400).json(book);
+    response.status(200).json(book);
   } catch (error) {
     console.log(error.message);
     response.status(500).send({ message: error.message });

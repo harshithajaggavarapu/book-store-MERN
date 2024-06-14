@@ -9,12 +9,13 @@ const app = express();
 app.use(express.json());
 
 // middleware for cors
-app.use(
-  cors({
-    origin: "http://localhost:3000/",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+app.use(cors());
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173/",
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//   })
+// );
 // creating default http route
 app.get("/", (request, response) => {
   return response.status(200).send("Welcome to Book Store App");
