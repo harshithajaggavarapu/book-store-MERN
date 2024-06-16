@@ -5,8 +5,8 @@ const BackButton = ({ dest = "/" }) => {
   return (
     <div>
       <Link to={dest}>
-        <button className="p-2 m-2 border border-black bg-sky-500 rounded-md">
-          Back
+        <button className="p-2 m-2 border  border-black bg-red-800 rounded-md">
+          Home
         </button>
       </Link>
     </div>

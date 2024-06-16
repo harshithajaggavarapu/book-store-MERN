@@ -1,56 +1,42 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import BackButton from "./BackButton";
+import { useParams } from "react-router-dom";
 import Loader from "./Loader";
+import Header from "./Header";
+import useFetchBookDataEdit from "../hooks/useFetchBookDataEdit";
+import useEditDetails from "../hooks/useEditDetails";
+import { useEffect, useState } from "react";
 
 const EditBook = () => {
-  const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [publishYear, setPublishYear] = useState(0);
-  const navigate = useNavigate();
   const { id } = useParams();
-  const fetchData = async () => {
-    try {
-      const data = await axios.get("http://localhost:5555/books/" + id);
-      setTitle(data?.data?.title);
-      setAuthor(data?.data?.author);
-      setPublishYear(data?.data?.publishYear);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
+  const {
+    title: titleFetched,
+    author: authorFetched,
+    publishYear: publishYearFetched,
+    loading: fetchLoading,
+  } = useFetchBookDataEdit(id);
   useEffect(() => {
-    setLoading(true);
-    fetchData();
-  }, []);
-  const handleEditSubmit = async () => {
+    if (!fetchLoading) {
+      setTitle(titleFetched);
+      setAuthor(authorFetched);
+      setPublishYear(publishYearFetched);
+    }
+  }, [titleFetched, authorFetched, publishYearFetched, fetchLoading]);
+  const { editDetails } = useEditDetails();
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
     const data = {
       title,
       author,
       publishYear,
     };
-    setLoading(true);
-    try {
-      const response = await axios.put(
-        "http://localhost:5555/books/" + id,
-        data
-      );
-      setLoading(false);
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-      alert("Error in adding new book. check console");
-      setLoading(false);
-    }
+    await editDetails(data, id);
   };
   return (
     <div className="">
-      <BackButton dest={"/"} />
-      {!loading ? (
+      <Header home={false} />
+      {!fetchLoading ? (
         <div>
           <div className="border border-sky-700 border-solid w-[30%] m-[10%] py-[5%] mx-[30%]">
             <form className="mr-[2%]">

@@ -1,15 +1,14 @@
-import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import BackButton from "./BackButton";
 import Loader from "./Loader";
+import Header from "./Header";
+import useAddBook from "../hooks/useAddBook";
 
 const CreateBooks = () => {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [publishYear, setPublishYear] = useState(0);
-  const navigate = useNavigate();
+  const { submitBook } = useAddBook();
   const handleSubmit = async () => {
     const data = {
       title,
@@ -17,19 +16,13 @@ const CreateBooks = () => {
       publishYear,
     };
     setLoading(true);
-    try {
-      const response = await axios.post("http://localhost:5555/books/", data);
+    await submitBook(data, () => {
       setLoading(false);
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-      alert("Error in adding new book. check console");
-      setLoading(false);
-    }
+    });
   };
   return (
     <div className="">
-      <BackButton dest={"/"} />
+      <Header home={false} />
       {!loading ? (
         <div>
           <div className="border border-sky-700 border-solid w-[30%] m-[10%] py-[5%] mx-[30%]">

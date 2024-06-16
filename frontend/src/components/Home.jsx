@@ -1,40 +1,24 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
+
 import { Link } from "react-router-dom";
 import Loader from "./Loader";
 import Popup from "reactjs-popup";
+import Header from "./Header";
+import useDeleteBook from "../hooks/useDelete";
+import useGetBooks from "../hooks/useGetBooks";
 const Home = () => {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [triggering, setTriggering] = useState(false);
-  const deleteBook = async (id) => {
-    setLoading(true);
-    try {
-      const response = axios.delete("http://localhost:5555/books/" + id);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
+  const {
+    deleteBook,
+    loading: deletingBook,
+    error: deleteError,
+  } = useDeleteBook();
+  console.log(deleteError);
+  const { books, loading: getBooksLoading } = useGetBooks(triggering);
+  const handleDelete = async (id) => {
+    await deleteBook(id);
     setTriggering(!triggering);
   };
-  const getBooks = async () => {
-    try {
-      const data = axios.get("http://localhost:5555/books/");
-      const json = await data;
-      setBooks(json.data);
-      console.log(json.data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    setLoading(true);
-    getBooks();
-  }, [triggering]);
-
   // Plan
   // title section - ADD new book button
   // list of books in a table with column names as s.no, title, aithor, pusblished year
@@ -46,15 +30,8 @@ const Home = () => {
 
   return (
     <div className="">
-      <div className="flex justify-between bg-black bg-opacity-80">
-        <h1 className="font-semibold text-xl p-2 m-2 text-white">Books List</h1>
-        <Link to={"/books/create"}>
-          <button className="border p-2 mr-5 m-2 border-black bg-red-800 rounded-md">
-            Add Book
-          </button>
-        </Link>
-      </div>
-      {!loading ? (
+      <Header home={true} />
+      {!(deletingBook && getBooksLoading) ? (
         <div className="w-full mx-[10%] pt-[10%]">
           <table className=" table-auto border-separate border-spacing-2 w-9/12">
             <thead>
@@ -123,6 +100,7 @@ const Home = () => {
                               <button
                                 className="button border border-black bg-red-600 mx-[40%] rounded-lg p-4 m-4"
                                 onClick={() => {
+                                  handleDelete(book._id);
                                   deleteBook(book._id);
                                   console.log("modal closed ");
                                   close();

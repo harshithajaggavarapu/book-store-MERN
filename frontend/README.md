@@ -23,8 +23,8 @@
 
 - developments to work on (do it for next day)
     - improve UI books cards
-    - common header for all pages
-    - write custom hooks for the api calls
+    - common header for all pages (done)
+    - write custom hooks for the api calls(done)
     - make the site responsive
 
 
